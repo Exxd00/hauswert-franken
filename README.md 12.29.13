@@ -1,0 +1,80 @@
+# Hauswert-Franken
+
+Professionelle Website für Hauswert-Franken - Hochwertige Sanierung, Modernisierung und Innenausbau in Franken.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Language**: TypeScript
+- **Package Manager**: Bun
+
+## Features
+
+- **Corporate Luxury Design**: Elegant, professional design suitable for a premium renovation company
+- **Responsive**: Mobile-first design that works on all devices
+- **SEO Optimized**: Dynamic pages for cities and services, structured data, sitemap
+- **Performance**: Optimized for PageSpeed scores
+- **Contact Form**: Detailed lead qualification form with image upload and compression
+- **Analytics Ready**: Event tracking for conversions
+
+## Pages
+
+- `/` - Homepage
+- `/leistungen` - Services overview
+- `/leistung/[service]` - Individual service pages
+- `/projekte` - Projects/References
+- `/ueber-uns` - About page
+- `/kontakt` - Contact page with detailed form
+- `/thank-you` - Thank you page (conversion tracking)
+- `/[city]` - City-specific landing pages
+- `/[city]/[service]` - City + Service combination pages
+- `/impressum` - Legal information
+- `/datenschutz` - Privacy policy
+
+## SEO
+
+The website generates thousands of SEO-optimized pages:
+- 160+ cities in Franken region
+- 12 service categories
+- City × Service combinations
+
+## Development
+
+```bash
+# Install dependencies
+bun install
+
+# Start development server
+bun run dev
+
+# Build for production
+bun run build
+
+# Start production server
+bun run start
+```
+
+## Structure
+
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── [citySlug]/        # Dynamic city pages
+│   ├── leistung/          # Service pages
+│   └── ...
+├── components/
+│   ├── layout/            # Header, Footer
+│   ├── sections/          # Page sections
+│   └── ui/                # shadcn/ui components
+└── lib/
+    ├── data/              # Cities and services data
+    └── utils/             # Analytics, image compression
+```
+
+## Contact
+
+- **Company**: Hauswert-Franken
+- **Region**: Franken (Nürnberg + 100km radius)
+- **Services**: Sanierung, Modernisierung, Innenausbau
