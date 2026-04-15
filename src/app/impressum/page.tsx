@@ -32,7 +32,7 @@ export default function ImpressumPage() {
 
               <h2>Vertreten durch</h2>
               <p>
-                Max Mustermann<br />
+                Roberto Dreger<br />
                 Geschäftsführer
               </p>
 
@@ -58,7 +58,7 @@ export default function ImpressumPage() {
 
               <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
               <p>
-                Max Mustermann<br />
+                Roberto Dreger<br />
                 Hans Bunte Straße 26<br />
                 90431 Nürnberg
               </p>
