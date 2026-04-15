@@ -36,13 +36,6 @@ export default function ImpressumPage() {
                 Geschäftsführer
               </p>
 
-              <h2>Registereintrag</h2>
-              <p>
-                Eintragung im Handelsregister.<br />
-                Registergericht: Amtsgericht Nürnberg<br />
-                Registernummer: HRB XXXXX
-              </p>
-
               <h2>Umsatzsteuer-ID</h2>
               <p>
                 Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz:<br />
