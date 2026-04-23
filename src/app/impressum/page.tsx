@@ -26,7 +26,7 @@ export default function ImpressumPage() {
 
               <h2>Kontakt</h2>
               <p>
-                Telefon: 0176 35589478<br />
+                Telefon: +49 174 2629258<br />
                 E-Mail: info@rd-frankenbau.de
               </p>
 

@@ -218,13 +218,13 @@ export default async function ServicePage({ params }: Props) {
                   <div className="text-center pt-4 border-t border-white/10">
                     <p className="text-xs sm:text-sm text-white/50 mb-2">oder rufen Sie an:</p>
                     <a
-                      href="tel:+4917635589478"
+                      href="tel:+491742629258"
                       className="inline-flex items-center gap-2 text-base sm:text-lg font-semibold text-white hover:text-amber-400 transition-colors"
                     >
                       <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
-                      0176 35589478
+                      +49 174 2629258
                     </a>
                   </div>
                 </div>

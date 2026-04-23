@@ -89,7 +89,7 @@ export default function DatenschutzPage() {
                 Hans Bunte Straße 26<br />
                 90431 Nürnberg<br />
                 <br />
-                Telefon: 0176 35589478<br />
+                Telefon: +49 174 2629258<br />
                 E-Mail: info@rd-frankenbau.de
               </p>
 

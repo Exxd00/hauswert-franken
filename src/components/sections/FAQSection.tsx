@@ -85,8 +85,8 @@ export function FAQSection() {
             </p>
             <p className="font-semibold text-lg sm:text-xl text-stone-800 dark:text-white">
               Kontaktieren Sie uns direkt:
-              <a href="tel:+4917635589478" className="text-amber-600 dark:text-amber-400 ml-2 hover:underline">
-                0176 35589478
+              <a href="tel:+491742629258" className="text-amber-600 dark:text-amber-400 ml-2 hover:underline">
+                +49 174 2629258
               </a>
             </p>
           </div>

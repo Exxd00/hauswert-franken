@@ -723,7 +723,7 @@ export default function AdminPage() {
               <div className="bg-white/5 rounded-xl p-6 border border-white/10 space-y-3">
                 <div className="flex items-center gap-3">
                   <span className="text-slate-400">Telefon:</span>
-                  <span className="text-white">+49 176 35589478</span>
+                  <span className="text-white">+49 174 2629258</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-slate-400">E-Mail:</span>

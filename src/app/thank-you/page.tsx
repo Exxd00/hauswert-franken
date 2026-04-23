@@ -93,14 +93,14 @@ export default function ThankYouPage() {
                 Sie möchten nicht warten? Rufen Sie uns direkt an:
               </p>
               <a
-                href="tel:+4917635589478"
+                href="tel:+491742629258"
                 className="inline-flex items-center gap-3 text-xl font-semibold text-primary hover:text-primary/80 transition-colors"
-                onClick={() => trackPhoneClick('0176 35589478')}
+                onClick={() => trackPhoneClick('+49 174 2629258')}
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                0176 35589478
+                +49 174 2629258
               </a>
               <p className="mt-4 text-sm text-muted-foreground">
                 Oder per E-Mail: <a href="mailto:Info@rd-frankenbau.de" className="text-primary hover:underline">Info@rd-frankenbau.de</a>

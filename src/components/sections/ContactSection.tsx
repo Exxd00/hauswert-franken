@@ -809,7 +809,7 @@ export function ContactSection() {
 
         <div className={`mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <a
-            href="tel:+4917635589478"
+            href="tel:+491742629258"
             className="flex items-center gap-4 p-5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 transition-all duration-300 group"
           >
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
@@ -819,7 +819,7 @@ export function ContactSection() {
             </div>
             <div>
               <p className="text-xs text-white/50">Rufen Sie uns an</p>
-              <span className="font-semibold text-white">0176 35589478</span>
+              <span className="font-semibold text-white">+49 174 2629258</span>
             </div>
           </a>
 

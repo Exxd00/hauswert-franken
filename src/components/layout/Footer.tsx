@@ -64,7 +64,7 @@ export function Footer() {
   }, []);
 
   const handlePhoneClick = () => {
-    trackPhoneClick('0176 35589478');
+    trackPhoneClick('+49 174 2629258');
   };
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
@@ -123,7 +123,7 @@ export function Footer() {
                   </svg>
                 </Button>
               </Link>
-              <a href="tel:+4917635589478" onClick={handlePhoneClick}>
+              <a href="tel:+491742629258" onClick={handlePhoneClick}>
                 <Button
                   variant="outline"
                   size="lg"
@@ -326,7 +326,7 @@ export function Footer() {
               {/* Contact Info */}
               <div className="space-y-4">
                 <a
-                  href="tel:+4917635589478"
+                  href="tel:+491742629258"
                   className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group"
                   onClick={handlePhoneClick}
                 >
@@ -337,7 +337,7 @@ export function Footer() {
                   </div>
                   <div>
                     <p className="text-xs text-white/50">Telefon</p>
-                    <span className="font-semibold text-white">0176 35589478</span>
+                    <span className="font-semibold text-white">+49 174 2629258</span>
                   </div>
                 </a>
 

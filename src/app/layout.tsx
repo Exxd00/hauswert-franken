@@ -71,7 +71,7 @@ const structuredData = {
   name: "RD Frankenbau",
   description: "Hochwertige Sanierung, Modernisierung und Innenausbau in Franken",
   url: "https://rd-frankenbau.de",
-  telephone: "+49176 35589478",
+  telephone: "+49 174 2629258",
   email: "Info@rd-frankenbau.de",
   address: {
     "@type": "PostalAddress",

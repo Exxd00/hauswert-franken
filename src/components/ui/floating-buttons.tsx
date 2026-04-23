@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 export function FloatingButtons() {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const phoneNumberTel = '+4917635589478';
+  const phoneNumberTel = '+491742629258';
 
   useEffect(() => {
     const handleScroll = () => {
