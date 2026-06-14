@@ -9,7 +9,7 @@ const coordinatedServices = [
     id: 'cleaning',
     category: 'Reinigung & Vorbereitung',
     description: 'Professionelle Reinigungsleistungen vor, während und nach dem Projekt.',
-    services: ['Bauendreinigung', 'Entrümpelung', 'Grundreinigung'],
+    services: ['Bauendreinigung', 'Grundreinigung', 'Fensterreinigung'],
     partner: 'Key Clean Service',
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -138,8 +138,8 @@ export function CoordinatedServicesSection() {
           {/* Main Value Proposition Text */}
           <p className="text-base sm:text-lg text-stone-600 dark:text-stone-400 leading-relaxed max-w-2xl mx-auto">
             Neben Sanierung, Modernisierung und Innenausbau koordinieren wir auf Wunsch auch
-            ergänzende Leistungen über ausgewählte Fachpartner – etwa Entrümpelung,
-            Bauendreinigung oder Küchenmontage.
+            ergänzende Leistungen über ausgewählte Fachpartner – etwa Bauendreinigung,
+            Fensterreinigung oder Küchenmontage.
           </p>
 
           {/* Emphasis Line */}

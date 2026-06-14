@@ -5,6 +5,12 @@ export interface ProjectPhoto {
   category: 'before' | 'after';
 }
 
+export interface BeforeAfterPair {
+  before: string;
+  after: string;
+  title?: string;
+}
+
 export interface Project {
   id: number;
   title: string;
@@ -20,6 +26,7 @@ export interface Project {
   mainImage: string;
   beforePhotos: ProjectPhoto[];
   afterPhotos: ProjectPhoto[];
+  beforeAfterPairs?: BeforeAfterPair[];
   serviceCategory?: string;
 }
 
@@ -274,6 +281,91 @@ export const projects: Project[] = [
       { src: '/photos/projekt-3/nachher/IMG_1523.JPG', alt: 'Flur komplett', category: 'after' },
       { src: '/photos/projekt-3/nachher/IMG_1547.JPG', alt: 'Detail Ausstattung', category: 'after' },
       { src: '/photos/projekt-3/nachher/IMG_1600.JPG', alt: 'Übergabefertig', category: 'after' },
+    ],
+  },
+  {
+    id: 4,
+    title: 'Kellerausbau: Vom Abstellraum zum Wohnraum',
+    location: 'Erlangen',
+    address: 'Wohngebiet',
+    type: 'Kellergeschoss',
+    area: '55 m²',
+    duration: '5 Wochen',
+    year: '2026',
+    description: 'Ein vollgestellter, feuchter Kellerraum wurde zu einem hellen, trockenen Wohn- und Hobbyraum. Wir starteten mit einer intelligenten Entrümpelung – verwertbare Gegenstände wurden angerechnet, der Rest sortenrein entsorgt. Anschließend sanierten wir die Feuchtigkeit, dämmten den Raum und bauten ihn mit hochwertigem Bodenbelag, moderner Beleuchtung und gemütlicher Atmosphäre komplett aus.',
+    highlights: [
+      'Intelligente Entrümpelung & fachgerechte Entsorgung',
+      'Feuchtigkeitssanierung & Abdichtung',
+      'Wärmedämmung für angenehmes Raumklima',
+      'Neue Elektroinstallation & Beleuchtungskonzept',
+      'Hochwertiger, pflegeleichter Bodenbelag',
+      'Gemütlicher Wohn- und Hobbyraum'
+    ],
+    services: [
+      'Entrümpelung',
+      'Feuchtigkeitssanierung',
+      'Trockenbau',
+      'Elektroinstallation',
+      'Bodenverlegung',
+      'Malerarbeiten'
+    ],
+    serviceCategory: 'entruempelung',
+    mainImage: '/photos/projekt-keller/nachher/nachher-1.webp',
+    beforeAfterPairs: [
+      { before: '/photos/projekt-keller/vorher-1.jpg', after: '/photos/projekt-keller/nachher/nachher-1.webp', title: 'Hauptraum' },
+      { before: '/photos/projekt-keller/vorher-2.jpg', after: '/photos/projekt-keller/nachher/nachher-3.jpg', title: 'Wohnbereich' },
+    ],
+    beforePhotos: [
+      { src: '/photos/projekt-keller/vorher-1.jpg', alt: 'Vollgestellter Keller vor der Räumung', category: 'before' },
+      { src: '/photos/projekt-keller/vorher-2.jpg', alt: 'Unsanierter Kellerraum mit Feuchtigkeit', category: 'before' },
+    ],
+    afterPhotos: [
+      { src: '/photos/projekt-keller/nachher/nachher-1.webp', alt: 'Heller Wohnraum im ausgebauten Keller mit Kamin', category: 'after' },
+      { src: '/photos/projekt-keller/nachher/nachher-2.jpg', alt: 'Gemütlicher Loungebereich im ausgebauten Keller', category: 'after' },
+      { src: '/photos/projekt-keller/nachher/nachher-3.jpg', alt: 'Wohnliches Untergeschoss mit viel Licht', category: 'after' },
+      { src: '/photos/projekt-keller/nachher/nachher-4.jpg', alt: 'Moderner Kellerausbau mit Treppe und Küchenzeile', category: 'after' },
+    ],
+  },
+  {
+    id: 5,
+    title: 'Gartengestaltung: Von verwildert zur Wohlfühl-Oase',
+    location: 'Fürth',
+    address: 'Einfamilienhaus',
+    type: 'Garten & Außenanlage',
+    area: '180 m²',
+    duration: '4 Wochen',
+    year: '2026',
+    description: 'Ein vernachlässigter, teils verwilderter Garten mit Staunässe wurde in eine moderne Wohlfühl-Oase verwandelt. Nach Rodung, Entrümpelung und einer fachgerechten Entwässerung entstanden eine einladende Terrasse, geschwungene Wege, neue Bepflanzung und ein überdachter Loungebereich für laue Sommerabende.',
+    highlights: [
+      'Rodung & Entrümpelung der verwilderten Fläche',
+      'Drainage & Entwässerung gegen Staunässe',
+      'Terrassen- und Wegebau mit hochwertigem Pflaster',
+      'Neue Bepflanzung, Beete & Rollrasen',
+      'Überdachter Lounge- und Sitzbereich',
+      'Stimmungsvolle Außenbeleuchtung'
+    ],
+    services: [
+      'Gartengestaltung',
+      'Pflasterarbeiten',
+      'Entwässerung',
+      'Bepflanzung',
+      'Entrümpelung'
+    ],
+    serviceCategory: 'gartengestaltung',
+    mainImage: '/photos/projekt-garten/nachher/nachher-1.jpg',
+    beforeAfterPairs: [
+      { before: '/photos/projekt-garten/vorher-1.jpg', after: '/photos/projekt-garten/nachher/nachher-3.jpg', title: 'Gartenfläche' },
+      { before: '/photos/projekt-garten/vorher-2.webp', after: '/photos/projekt-garten/nachher/nachher-2.jpg', title: 'Terrassenbereich' },
+    ],
+    beforePhotos: [
+      { src: '/photos/projekt-garten/vorher-1.jpg', alt: 'Verwilderter Garten vor der Gestaltung', category: 'before' },
+      { src: '/photos/projekt-garten/vorher-2.webp', alt: 'Rasenfläche mit Staunässe vor der Sanierung', category: 'before' },
+    ],
+    afterPhotos: [
+      { src: '/photos/projekt-garten/nachher/nachher-1.jpg', alt: 'Überdachter Loungebereich im neu gestalteten Garten', category: 'after' },
+      { src: '/photos/projekt-garten/nachher/nachher-2.jpg', alt: 'Moderne Terrasse mit Feuerstelle und Sitzbereich', category: 'after' },
+      { src: '/photos/projekt-garten/nachher/nachher-3.jpg', alt: 'Blühende Beete entlang des neuen Gartenwegs', category: 'after' },
+      { src: '/photos/projekt-garten/nachher/nachher-4.jpg', alt: 'Gemütlicher Sitzbereich unter der Pergola', category: 'after' },
     ],
   },
 ];

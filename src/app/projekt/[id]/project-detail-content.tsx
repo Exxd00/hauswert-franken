@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Lightbox } from '@/components/ui/lightbox';
+import { BeforeAfterGrid } from '@/components/ui/before-after-slider';
 import type { Project } from '@/lib/data/projects';
 
 interface ProjectDetailContentProps {
@@ -137,6 +138,26 @@ export function ProjectDetailContent({ project, otherProjects }: ProjectDetailCo
           </div>
         </div>
       </section>
+
+      {/* Interactive Before/After Comparison */}
+      {project.beforeAfterPairs && project.beforeAfterPairs.length > 0 && (
+        <section className="py-8 md:py-12 bg-white border-b border-stone-100">
+          <div className="container-custom">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                </svg>
+              </span>
+              <h2 className="text-base md:text-xl font-bold text-stone-800">Vorher / Nachher im Vergleich</h2>
+            </div>
+            <p className="text-xs md:text-sm text-stone-500 mb-5 md:mb-7">
+              Ziehen Sie den Regler, um die Verwandlung selbst zu erleben.
+            </p>
+            <BeforeAfterGrid pairs={project.beforeAfterPairs} />
+          </div>
+        </section>
+      )}
 
       {/* BEFORE Photos Section */}
       <section className="py-6 md:py-10 bg-white">

@@ -199,6 +199,105 @@ Auch bei Teilmodernisierungen garantieren wir höchste Qualität und termingerec
 export const allServices: Service[] = [
   ...mainServices,
   {
+    name: "Entrümpelung & Räumung",
+    slug: "entruempelung",
+    shortDescription: "Intelligente Entrümpelung mit System: digitale Bestandsaufnahme, faire Wertanrechnung und besenreine Übergabe – schnell, sauber und transparent.",
+    longDescription: "Ob Keller, Dachboden, Wohnung, Haus oder Garage – wir entrümpeln durchdacht und nachhaltig. Verwertbare Gegenstände rechnen wir an, alles Übrige entsorgen wir fachgerecht und sortenrein.",
+    detailedDescription: `Entrümpeln ist für uns mehr als "wegwerfen". Wir gehen die Räumung Ihres Kellers, Dachbodens, Ihrer Wohnung oder Garage mit System an – schnell, sauber und mit Respekt vor Wert und Umwelt.
+
+Am Anfang steht eine kostenlose Besichtigung mit digitaler Bestandsaufnahme. Auf dieser Basis erhalten Sie einen verbindlichen Festpreis – ohne versteckte Kosten und ohne böse Überraschungen. Verwertbare Möbel, Geräte oder Antiquitäten bewerten wir und rechnen sie an: So sinken Ihre Kosten, und Brauchbares bekommt ein zweites Leben.
+
+Bei der Räumung trennen wir konsequent sortenrein: Wiederverwendung und Spende zuerst, dann Recycling, erst zuletzt die fachgerechte Entsorgung. Das schont Umwelt und Geldbeutel gleichermaßen. Auf Wunsch erhalten Sie einen Entsorgungsnachweis.
+
+Ob einzelne Kellerräume, komplette Haushaltsauflösungen oder schwierige Messie-Situationen – wir arbeiten diskret, zuverlässig und übergeben den Raum besenrein. Und weil wir auch sanieren, lässt sich die Entrümpelung nahtlos mit anschließenden Renovierungs- oder Ausbauarbeiten aus einer Hand kombinieren.`,
+    icon: "truck",
+    features: [
+      "Entrümpelung von Keller, Dachboden, Wohnung & Haus",
+      "Smarte Wertanrechnung verwertbarer Gegenstände",
+      "Digitale Bestandsaufnahme & transparenter Festpreis",
+      "Sortenreine Trennung: Wiederverwendung, Spende, Recycling",
+      "Haushaltsauflösungen & Messie-Wohnungen",
+      "Besenreine Übergabe inklusive",
+      "Fachgerechte Entsorgung mit Nachweis",
+      "Kurzfristige Termine möglich"
+    ],
+    benefits: [
+      "Verbindlicher Festpreis nach digitaler Bestandsaufnahme",
+      "Spürbare Kostenreduktion durch faire Wertanrechnung",
+      "Umweltschonende, sortenreine Verwertung",
+      "Diskrete und zuverlässige Abwicklung",
+      "Besenreine Übergabe garantiert",
+      "Nahtlose Kombination mit Sanierung & Ausbau",
+      "Entsorgungsnachweis auf Wunsch"
+    ],
+    process: [
+      { step: 1, title: "Kostenlose Besichtigung", description: "Aufmaß und digitale Bestandsaufnahme vor Ort – die Basis für ein faires Angebot." },
+      { step: 2, title: "Festpreisangebot", description: "Transparenter Festpreis inklusive Anrechnung verwertbarer Gegenstände." },
+      { step: 3, title: "Terminierung", description: "Schnelle, planbare Termine nach Ihren Wünschen – auch kurzfristig." },
+      { step: 4, title: "Räumung & Sortierung", description: "Sortenreine Trennung in Wiederverwendung, Spende, Recycling und Entsorgung." },
+      { step: 5, title: "Besenreine Übergabe", description: "Saubere Endkontrolle und auf Wunsch ein Entsorgungsnachweis." }
+    ],
+    faqs: [
+      { question: "Was kostet eine Entrümpelung?", answer: "Nach der kostenlosen Besichtigung erhalten Sie einen verbindlichen Festpreis. Verwertbare Gegenstände rechnen wir an und senken so Ihre Kosten." },
+      { question: "Wie schnell können Sie entrümpeln?", answer: "Häufig innerhalb weniger Tage. In dringenden Fällen finden wir auch kurzfristige Lösungen." },
+      { question: "Was passiert mit meinen Sachen?", answer: "Brauchbares wird wiederverwendet oder gespendet, Wertstoffe werden recycelt, der Rest fachgerecht entsorgt." },
+      { question: "Übernehmen Sie auch Haushaltsauflösungen?", answer: "Ja, von der einzelnen Wohnung bis zum kompletten Haus – stets diskret und zuverlässig." },
+      { question: "Kann direkt im Anschluss saniert werden?", answer: "Ja. Als Sanierungsbetrieb verbinden wir Entrümpelung und Renovierung nahtlos aus einer Hand." }
+    ],
+    duration: "1-3 Tage",
+    priceRange: "Festpreis nach Aufmaß",
+    keywords: ["entrümpelung", "entrümpeln", "haushaltsauflösung", "kellerentrümpelung", "wohnungsauflösung", "räumung", "entsorgung", "messie wohnung"]
+  },
+  {
+    name: "Gartengestaltung & Außenanlagen",
+    slug: "gartengestaltung",
+    shortDescription: "Vom verwilderten Grundstück zur Wohlfühl-Oase: Terrassen, Wege, Bepflanzung und Pflege – durchdachte Gartengestaltung aus einer Hand.",
+    longDescription: "Wir gestalten und pflegen Gärten und Außenanlagen mit dem gleichen Anspruch wie im Innenbereich – von der Planung über Pflaster- und Erdarbeiten bis zur Bepflanzung und regelmäßigen Pflege.",
+    detailedDescription: `Ein schöner Garten ist die Verlängerung Ihres Wohnraums ins Freie. Mit dem gleichen Qualitätsanspruch wie im Innenbereich gestalten wir Außenanlagen, die das ganze Jahr Freude machen – durchdacht geplant und sauber ausgeführt.
+
+Am Anfang steht Ihre Vision. Gemeinsam entwickeln wir ein Konzept, das zu Grundstück, Nutzung und Budget passt: vom gemütlichen Terrassenplatz über klar geführte Wege bis zur stimmigen Bepflanzung. Anschließend übernehmen wir die komplette Umsetzung – als ein Ansprechpartner für das gesamte Projekt.
+
+Dazu gehören Erd-, Rodungs- und Drainagearbeiten ebenso wie der Bau von Terrassen und Wegen aus Pflaster, Naturstein oder WPC. Wir setzen Hecken, Bäume und Beete, verlegen Rollrasen und schaffen mit Pergolen, Sicht- und Windschutz private Rückzugsorte.
+
+Auch nach der Fertigstellung sind wir für Sie da: Mit regelmäßiger Gartenpflege, Grünschnitt und saisonaler Betreuung bleibt Ihre Außenanlage dauerhaft in Bestform. Verwilderte oder zugewachsene Flächen bringen wir mit Rodung und Entrümpelung schnell wieder in Schuss.`,
+    icon: "tree",
+    features: [
+      "Gartenplanung & Konzeptentwicklung",
+      "Terrassen- und Wegebau (Pflaster, Naturstein, WPC)",
+      "Erd-, Rodungs- und Drainagearbeiten",
+      "Bepflanzung, Hecken & Rollrasen",
+      "Sicht- und Windschutz, Zäune & Pergolen",
+      "Hochbeete & Beeteinfassungen",
+      "Gartenpflege & Grünschnitt",
+      "Rodung & Entrümpelung verwilderter Flächen"
+    ],
+    benefits: [
+      "Mehr Wohn- und Lebensqualität im Freien",
+      "Wertsteigerung Ihrer Immobilie",
+      "Durchdachte Planung und Umsetzung aus einer Hand",
+      "Hochwertige, langlebige Materialien",
+      "Pflegeleichte Gestaltung auf Wunsch",
+      "Betreuung auch nach der Fertigstellung"
+    ],
+    process: [
+      { step: 1, title: "Beratung & Aufmaß", description: "Vor-Ort-Termin, Bestandsaufnahme und gemeinsame Ideenfindung." },
+      { step: 2, title: "Planung & Konzept", description: "Gestaltungsentwurf mit Materialien, Wegeführung und Bepflanzung." },
+      { step: 3, title: "Erd- & Vorarbeiten", description: "Rodung, Modellierung, Entwässerung und Vorbereitung des Untergrunds." },
+      { step: 4, title: "Bau & Bepflanzung", description: "Terrassen, Wege, Beete, Rasen sowie Sicht- und Windschutz." },
+      { step: 5, title: "Pflege & Betreuung", description: "Auf Wunsch regelmäßige Gartenpflege, Grünschnitt und saisonale Betreuung." }
+    ],
+    faqs: [
+      { question: "Übernehmen Sie auch kleine Gärten?", answer: "Ja, vom Stadtgarten bis zum großen Grundstück gestalten wir jede Größe mit dem gleichen Anspruch." },
+      { question: "Bauen Sie auch Terrassen und Wege?", answer: "Ja, inklusive Pflaster-, Naturstein- und WPC-Arbeiten samt fachgerechtem Unterbau." },
+      { question: "Helfen Sie bei Staunässe im Garten?", answer: "Ja, mit fachgerechter Drainage und Entwässerung lösen wir Staunässe dauerhaft." },
+      { question: "Bieten Sie auch regelmäßige Pflege an?", answer: "Ja, auf Wunsch übernehmen wir Grünschnitt und saisonale Gartenpflege." },
+      { question: "Räumen Sie auch verwilderte Grundstücke?", answer: "Ja, Rodung und Entrümpelung verwilderter Flächen gehören zu unserem Service." }
+    ],
+    duration: "1-4 Wochen je nach Umfang",
+    priceRange: "Individuell nach Projekt",
+    keywords: ["gartengestaltung", "gartenbau", "garten anlegen", "terrassenbau", "pflasterarbeiten", "gartenpflege", "außenanlagen", "landschaftsbau"]
+  },
+  {
     name: "Wohnungssanierung",
     slug: "wohnungssanierung",
     shortDescription: "Professionelle Komplettsanierung von Miet- und Eigentumswohnungen für höchste Wohnqualität.",
@@ -328,7 +427,7 @@ Trockenbau kommt bei fast allen unseren Projekten zum Einsatz: Bei der Kernsanie
     slug: "malerarbeiten",
     shortDescription: "Hochwertige Malerarbeiten für Innenräume mit Premium-Materialien und handwerklicher Präzision.",
     longDescription: "Professionelle Malerarbeiten veredeln jeden Raum. Wir arbeiten mit hochwertigen Farben und achten auf perfekte Ausführung.",
-    detailedDescription: `Malerarbeiten sind das Finish jeder Sanierung – und oft unterschätzt. Professionelle Malerarbeiten machen den Unterschied zwischen „gut" und „hervorragend". Bei RD Frankenbau legen wir größten Wert auf perfekte Untergrundvorbereitung, hochwertige Materialien und saubere Ausführung.
+    detailedDescription: `Malerarbeiten sind das Finish jeder Sanierung – und oft unterschätzt. Professionelle Malerarbeiten machen den Unterschied zwischen "gut" und "hervorragend". Bei RD Frankenbau legen wir größten Wert auf perfekte Untergrundvorbereitung, hochwertige Materialien und saubere Ausführung.
 
 Wir verwenden ausschließlich Markenfarben mit optimaler Deckkraft und Langlebigkeit. Unsere Maler sind erfahrene Fachleute, die jede Technik beherrschen – vom klassischen Anstrich bis zu dekorativen Spachteltechniken.
 
