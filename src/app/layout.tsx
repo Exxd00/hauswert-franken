@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Script from "next/script";
+import { Measurement } from "@/components/Measurement";
+import { company } from '@/lib/company';
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FloatingButtons } from "@/components/ui/floating-buttons";
@@ -8,7 +9,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL('https://rd-frankenbau.de'),
   title: {
-    default: "RD Frankenbau | Hochwertige Sanierung in Franken",
+    default: "RD Frankenbau | Sanierung & Modernisierung in Nürnberg",
     template: "%s | RD Frankenbau"
   },
   description: "Hochwertige Sanierung, Modernisierung und Innenausbau in Franken. Kernsanierung, Badsanierung und Wohnungsrenovierung in Nürnberg und Umgebung. Steigern Sie den Wert Ihrer Immobilie.",
@@ -55,12 +56,6 @@ export const metadata: Metadata = {
     description: 'Hochwertige Sanierung, Modernisierung und Innenausbau in Franken.',
     images: ['/og-image.jpg'],
   },
-  verification: {
-    google: 'your-google-verification-code',
-  },
-  alternates: {
-    canonical: 'https://rd-frankenbau.de',
-  },
 };
 
 // Structured Data for LocalBusiness
@@ -75,26 +70,14 @@ const structuredData = {
   email: "Info@rd-frankenbau.de",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Hans Bunte Straße 26",
+    streetAddress: company.street,
     addressLocality: "Nürnberg",
-    postalCode: "90431",
+    postalCode: company.postalCode,
     addressRegion: "Bayern",
     addressCountry: "DE"
   },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 49.4521,
-    longitude: 11.0767
-  },
-  areaServed: {
-    "@type": "GeoCircle",
-    geoMidpoint: {
-      "@type": "GeoCoordinates",
-      latitude: 49.4521,
-      longitude: 11.0767
-    },
-    geoRadius: "100000"
-  },
+  hasMap: company.mapsUrl,
+  areaServed: ["Nürnberg", "Fürth", "Erlangen", "Franken"],
   priceRange: "€€€",
   openingHoursSpecification: [
     {
@@ -145,19 +128,6 @@ export default function RootLayout({
   return (
     <html lang="de" suppressHydrationWarning>
       <head>
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-SX3GXK901G"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-SX3GXK901G');
-          `}
-        </Script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -175,6 +145,7 @@ export default function RootLayout({
         >
           {children}
           <FloatingButtons />
+          <Measurement />
           <Toaster />
         </ThemeProvider>
       </body>

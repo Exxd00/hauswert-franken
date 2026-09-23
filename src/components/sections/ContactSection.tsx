@@ -8,6 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { trackFormSubmit, trackImageUpload, trackProjectRequestStart } from '@/lib/utils/analytics';
 import { uploadContactFile } from '@/lib/supabase';
+import { attribution, recordEvent, reportLeadSuccess } from '@/lib/measurement';
+import { clearDraft, readDraft, saveDraft } from '@/lib/request-draft';
+import type { ContactPayload } from '@/lib/submission';
 import { compressFile, isImageFile, formatFileSize } from '@/lib/utils/file-compression';
 
 const serviceOptions = [
@@ -135,6 +138,27 @@ export function ContactSection() {
     nachricht: '',
   });
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const submissionId = useRef('');
+  const uploadedUrls = useRef<Record<string, string>>({});
+  const submitting = useRef(false);
+  const retry = useRef<() => void>(() => {});
+  const draftAvailable = useRef(false);
+
+  useEffect(() => {
+    void readDraft<FormData>().then(draft => {
+      if (!draft || !draft.fields || typeof draft.fields.name !== 'string') return;
+      submissionId.current=draft.id; uploadedUrls.current=draft.uploaded || {};
+      setFormData(draft.fields); setUploadedFiles(draft.files || []);
+      const service=serviceOptions.find(s=>s.name===draft.fields.projektArt);
+      setSelectedService(service?.id || null); setPrivacyAccepted(true);
+      setShowCustomSize(Boolean(draft.fields.customFlaeche));
+      draftAvailable.current=true;
+      setSubmitError('Ihre noch nicht abgeschlossene Anfrage wurde wiederhergestellt. Sie können den Versand erneut versuchen.');
+    });
+    const online=()=>{ if(draftAvailable.current && !submitting.current) retry.current(); };
+    window.addEventListener('online',online);
+    return ()=>window.removeEventListener('online',online);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -159,6 +183,7 @@ export function ContactSection() {
     if (service) {
       setFormData(prev => ({ ...prev, projektArt: service.name }));
       trackProjectRequestStart();
+      recordEvent('service_select', {service:service.name});
     }
 
     setTimeout(() => {
@@ -205,6 +230,9 @@ export function ContactSection() {
     if (!files || files.length === 0) return;
 
     const newFiles = Array.from(files);
+    if(newFiles.some(file=>file.size>10*1024*1024 || !['image/jpeg','image/png','application/pdf'].includes(file.type))) {
+      setSubmitError('Bitte wählen Sie JPG-, PNG- oder PDF-Dateien bis jeweils 10 MB.'); return;
+    }
     const totalFiles = uploadedFiles.length + newFiles.length;
 
     if (totalFiles > MAX_FILES) {
@@ -224,125 +252,65 @@ export function ContactSection() {
     setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitError('');
-    setUploadProgress('');
-    setUploadPercent(0);
-    setUploadPhase('idle');
-
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if(submitting.current || !privacyAccepted || !selectedService) return;
+    submitting.current=true; setIsSubmitting(true); setSubmitError('');
+    setUploadPercent(0); setUploadPhase('sending');
+    const id=submissionId.current || crypto.randomUUID(); submissionId.current=id;
+    const draft={id,savedAt:Date.now(),fields:formData,files:uploadedFiles,uploaded:uploadedUrls.current};
+    const durable=await saveDraft(draft); draftAvailable.current=true;
+    let captured=false;
+    const nameParts=formData.name.trim().split(/\s+/);
+    const payload: ContactPayload={
+      submissionId:id,phase:'capture',consent:true,projektArt:formData.projektArt,
+      immobilienTyp:propertyTypes.find(p=>p.id===formData.immobilienTyp)?.label || '',
+      ort:formData.ort,objektgroesse:sizeOptions.find(s=>s.id===formData.flaeche)?.label || formData.customFlaeche || 'Nicht angegeben',
+      budgetrahmen:budgetOptions.find(b=>b.id===formData.budget)?.label || 'Nicht angegeben',zeitrahmen:'Nach Absprache',
+      vorname:nameParts[0] || '',nachname:nameParts.slice(1).join(' '),email:formData.email,telefon:formData.telefon,nachricht:formData.nachricht,
+      fileNames:uploadedFiles.map(f=>f.name),fileUrls:[],failedFiles:[],attribution:attribution(),
+    };
+    const send=async(body:ContactPayload)=>{
+      const response=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(55000)});
+      const receipt=await response.json();
+      if(!response.ok || !receipt.success || !receipt.saved || receipt.submissionId!==id) throw new Error(receipt.error || 'Speicherung nicht bestätigt.');
+      return receipt;
+    };
     try {
-      trackFormSubmit('project_request', {
-        projektArt: formData.projektArt,
-        immobilienTyp: formData.immobilienTyp,
-        budget: formData.budget,
-        hasImages: uploadedFiles.length > 0 ? 'true' : 'false',
-      });
-
-      const fileUrls: string[] = [];
-      const totalFiles = uploadedFiles.length;
-
-      if (totalFiles > 0) {
-        // Phase 1: Compress all files (0% to 50%)
-        setUploadPhase('compressing');
-        setUploadProgress('Dateien werden komprimiert...');
-        const compressedFiles: File[] = [];
-
-        for (let i = 0; i < totalFiles; i++) {
-          const file = uploadedFiles[i];
-          const progressPercent = Math.round(((i + 1) / totalFiles) * 50);
-          setUploadPercent(progressPercent);
-
-          if (isImageFile(file)) {
-            setUploadProgress(`Bild ${i + 1}/${totalFiles} wird komprimiert...`);
-            const compressedFile = await compressFile(file);
-            compressedFiles.push(compressedFile);
-          } else {
-            setUploadProgress(`Datei ${i + 1}/${totalFiles} wird vorbereitet...`);
-            compressedFiles.push(file);
+      setUploadProgress('Anfrage wird sicher gespeichert...');
+      await send(payload); captured=true;
+      for(let i=0;i<uploadedFiles.length;i++) {
+        const file=uploadedFiles[i]; const key=[file.name,file.size,file.lastModified].join(':');
+        try {
+          setUploadPhase('uploading'); setUploadProgress('Datei '+(i+1)+'/'+uploadedFiles.length+' wird hochgeladen...');
+          if(!uploadedUrls.current[key]) {
+            const prepared=isImageFile(file) ? await compressFile(file) : file;
+            uploadedUrls.current[key]=await uploadContactFile(prepared);
+            await saveDraft({...draft,uploaded:uploadedUrls.current});
           }
-        }
-
-        // Phase 2: Upload compressed files (50% to 90%)
-        setUploadPhase('uploading');
-        for (let i = 0; i < compressedFiles.length; i++) {
-          const progressPercent = 50 + Math.round(((i + 1) / compressedFiles.length) * 40);
-          setUploadPercent(progressPercent);
-          setUploadProgress(`Datei ${i + 1}/${compressedFiles.length} wird hochgeladen...`);
-
-          try {
-            const url = await uploadContactFile(compressedFiles[i]);
-            fileUrls.push(url);
-          } catch (uploadError) {
-            console.error('File upload error:', uploadError);
-          }
-        }
+          payload.fileUrls.push(uploadedUrls.current[key]);
+        } catch { payload.failedFiles.push(file.name); }
+        setUploadPercent(Math.round(((i+1)/uploadedFiles.length)*85));
       }
-
-      // Phase 3: Sending form (90% to 100%)
-      setUploadPhase('sending');
-      setUploadPercent(95);
-      setUploadProgress('Anfrage wird gesendet...');
-
-      const nameParts = formData.name.trim().split(' ');
-      const vorname = nameParts[0] || '';
-      const nachname = nameParts.slice(1).join(' ') || '';
-
-      const sizeLabel = formData.flaeche
-        ? sizeOptions.find(s => s.id === formData.flaeche)?.label || formData.customFlaeche
-        : formData.customFlaeche || 'Nicht angegeben';
-
-      const budgetLabel = formData.budget
-        ? budgetOptions.find(b => b.id === formData.budget)?.label || 'Nicht angegeben'
-        : 'Nicht angegeben';
-
-      const propertyLabel = formData.immobilienTyp
-        ? propertyTypes.find(p => p.id === formData.immobilienTyp)?.label || 'Nicht angegeben'
-        : 'Nicht angegeben';
-
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          projektArt: formData.projektArt,
-          immobilienTyp: propertyLabel,
-          ort: formData.ort,
-          objektgroesse: sizeLabel,
-          zeitrahmen: 'So schnell wie möglich',
-          budgetrahmen: budgetLabel,
-          vorname,
-          nachname,
-          email: formData.email,
-          telefon: formData.telefon,
-          nachricht: formData.nachricht,
-          fileUrls,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send message');
+      if(payload.failedFiles.length) {
+        await send({...payload,phase:'upload_failed'});
+        throw new Error('Ihre Kontaktdaten sind gespeichert. Einige Dateien konnten nicht übertragen werden. Bitte versuchen Sie es erneut; die Dateien bleiben für den nächsten Versuch erhalten.');
       }
-
-      setUploadPercent(100);
-      setUploadProgress('Erfolgreich gesendet!');
-
-      // Small delay to show 100% before redirect
-      await new Promise(resolve => setTimeout(resolve, 500));
+      setUploadPhase('sending'); setUploadProgress('Anfrage wird abgeschlossen...'); setUploadPercent(95);
+      await send({...payload,phase:'complete'});
+      await clearDraft(); draftAvailable.current=false;
+      reportLeadSuccess(id, formData.projektArt);
+      setUploadPercent(100); setUploadProgress('Anfrage gespeichert!');
       router.push('/thank-you');
-    } catch (error) {
-      console.error('Contact form error:', error);
-      setSubmitError('Es gab einen Fehler beim Senden. Bitte versuchen Sie es erneut oder rufen Sie uns direkt an.');
-      setIsSubmitting(false);
-      setUploadProgress('');
-      setUploadPercent(0);
-      setUploadPhase('idle');
-    }
+    } catch(error) {
+      recordEvent('form_submit_error',{submissionId:id,entryPoint:'contact_form'});
+      const detail=error instanceof Error && error.name!=='TimeoutError' ? error.message : '';
+      setSubmitError((captured ? 'Ihre Anfrage ist im System gespeichert. ' : '')+(detail || 'Die Übertragung konnte nicht abgeschlossen werden.')+(durable ? ' Ihre Eingaben bleiben erhalten. Bei erneuter Internetverbindung versuchen wir den Versand automatisch erneut.' : ' Bitte lassen Sie diese Seite geöffnet und versuchen Sie es erneut.'));
+    } finally { submitting.current=false; setIsSubmitting(false); setUploadPhase('idle'); setUploadProgress(''); }
   };
+  retry.current=()=>{ void handleSubmit(); };
 
-  const canSubmit = formData.name && formData.email && formData.telefon && formData.ort && selectedService && privacyAccepted;
+  const canSubmit = formData.name && formData.email && formData.telefon && formData.ort && formData.immobilienTyp && selectedService && privacyAccepted;
 
   return (
     <section
@@ -717,7 +685,7 @@ export function ContactSection() {
                       >
                         Datenschutzerklärung
                       </a>{' '}
-                      zu und akzeptiere die Verwendung von Cookies zur Bearbeitung meiner Anfrage. *
+                      zu. *
                     </span>
                   </label>
                 </div>
@@ -847,7 +815,7 @@ export function ContactSection() {
             </div>
             <div>
               <p className="text-xs text-white/50">Unser Standort</p>
-              <span className="font-semibold text-white">Nürnberg & ganz Franken</span>
+              <span className="font-semibold text-white">Wilderstraße 19, 90408 Nürnberg</span>
             </div>
           </div>
         </div>

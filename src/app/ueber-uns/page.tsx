@@ -492,7 +492,7 @@ export default function UeberUnsPage() {
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold text-white mb-1">Standort Nürnberg</h3>
-                      <p className="text-white/70">Hans Bunte Straße 26, 90431 Nürnberg</p>
+                      <p className="text-white/70">Wilderstraße 19, 90408 Nürnberg</p>
                     </div>
                   </div>
                 </div>

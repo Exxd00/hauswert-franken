@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { allServices } from '@/lib/data/services';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://rd-frankenbau.de/leistungen' },
   title: 'Unsere Leistungen',
   description: 'Entdecken Sie unsere Sanierungsleistungen: Kernsanierung, Badsanierung, Modernisierung, Trockenbau, Malerarbeiten und mehr. Hochwertige Ausführung in Franken.',
 };

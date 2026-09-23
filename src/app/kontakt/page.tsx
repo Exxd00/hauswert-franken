@@ -4,6 +4,7 @@ import { Footer } from '@/components/layout/Footer';
 import { ContactSection } from '@/components/sections/ContactSection';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://rd-frankenbau.de/kontakt' },
   title: 'Kontakt',
   description: 'Kontaktieren Sie RD Frankenbau für eine kostenlose Erstberatung. Sanierung, Modernisierung und Innenausbau in Nürnberg und Franken.',
 };

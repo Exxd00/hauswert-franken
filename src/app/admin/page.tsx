@@ -731,7 +731,7 @@ export default function AdminPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-slate-400">Adresse:</span>
-                  <span className="text-white">Hans Bunte Straße 26, 90431 Nürnberg</span>
+                  <span className="text-white">Wilderstraße 19, 90408 Nürnberg</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-slate-400">Website:</span>

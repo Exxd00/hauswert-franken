@@ -366,8 +366,8 @@ export function Footer() {
                   <div>
                     <p className="text-xs text-white/50">Adresse</p>
                     <address className="font-semibold text-white text-sm not-italic">
-                      Hans Bunte Straße 26<br />
-                      90431 Nürnberg
+                      Wilderstraße 19<br />
+                      90408 Nürnberg
                     </address>
                   </div>
                 </div>

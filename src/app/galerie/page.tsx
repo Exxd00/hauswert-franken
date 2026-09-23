@@ -5,6 +5,7 @@ import { GalleryContent } from './gallery-content';
 import { getAllProjects } from '@/lib/data/projects';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://rd-frankenbau.de/galerie' },
   title: 'Galerie | Projektfotos & Referenzen',
   description: 'Entdecken Sie unsere Projektgalerie mit echten Fotos von Sanierungen, Badsanierungen und Modernisierungen in Franken.',
 };

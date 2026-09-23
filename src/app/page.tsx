@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+export const metadata: Metadata = { title: { absolute: "RD Frankenbau | Sanierung & Modernisierung in Nürnberg" }, description: "Kernsanierung, Badsanierung und Modernisierung in Nürnberg und Franken. RD Frankenbau, Wilderstraße 19, 90408 Nürnberg. Jetzt persönliche Beratung anfragen.", alternates: { canonical: "https://rd-frankenbau.de/" } };
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { HeroSection } from '@/components/sections/HeroSection';

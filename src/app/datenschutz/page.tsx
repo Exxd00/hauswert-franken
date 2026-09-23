@@ -3,6 +3,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://rd-frankenbau.de/datenschutz' },
   title: 'Datenschutz',
   description: 'Datenschutzerklärung von RD Frankenbau. Informationen zum Umgang mit Ihren Daten.',
 };
@@ -86,8 +87,8 @@ export default function DatenschutzPage() {
               </p>
               <p>
                 RD Frankenbau<br />
-                Hans Bunte Straße 26<br />
-                90431 Nürnberg<br />
+                Wilderstraße 19<br />
+                90408 Nürnberg<br />
                 <br />
                 Telefon: +49 174 2629258<br />
                 E-Mail: info@rd-frankenbau.de
@@ -120,6 +121,13 @@ export default function DatenschutzPage() {
 
               <h3>Anfrage per E-Mail, Telefon oder Telefax</h3>
               <p>
+                Abgesendete Anfragen werden zur Bearbeitung in Google Sheets gespeichert. Der Versand
+                einer E-Mail-Benachrichtigung erfolgt unabhängig davon. Übertragungsfehler und der
+                Bearbeitungsstand werden dokumentiert. Noch nicht bestätigte Anfragen einschließlich
+                ausgewählter Dateien werden auf Ihrem Gerät für höchstens sieben Tage zur erneuten
+                Übertragung gespeichert und nach erfolgreicher Übertragung entfernt.
+              </p>
+              <p>
                 Wenn Sie uns per E-Mail, Telefon oder Telefax kontaktieren, wird Ihre Anfrage inklusive
                 aller daraus hervorgehenden personenbezogenen Daten (Name, Anfrage) zum Zwecke der
                 Bearbeitung Ihres Anliegens bei uns gespeichert und verarbeitet.
@@ -135,6 +143,12 @@ export default function DatenschutzPage() {
               <p>
                 Google Analytics ermöglicht es dem Websitebetreiber, das Verhalten der Websitebesucher
                 zu analysieren. Die Nutzung erfolgt erst nach Ihrer Einwilligung.
+              </p>
+              <p>
+                Nach Ihrer Zustimmung speichern wir auch Kontaktaktionen und Formularereignisse mit
+                Seite, Leistung und Kampagnenquelle in einem Ereignisprotokoll. Namen, Telefonnummern,
+                E-Mail-Adressen, Nachrichtentexte und Dateiinhalte werden nicht an Google Analytics
+                übermittelt. Ihre Auswahl können Sie über „Datenschutzeinstellungen“ jederzeit ändern.
               </p>
 
               <h2>6. Ihre Rechte</h2>

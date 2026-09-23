@@ -3,6 +3,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://rd-frankenbau.de/impressum' },
   title: 'Impressum',
   description: 'Impressum und rechtliche Informationen von RD Frankenbau.',
 };
@@ -20,8 +21,8 @@ export default function ImpressumPage() {
               <h2>Angaben gemäß § 5 TMG</h2>
               <p>
                 RD Frankenbau<br />
-                Hans Bunte Straße 26<br />
-                90431 Nürnberg
+                Wilderstraße 19<br />
+                90408 Nürnberg
               </p>
 
               <h2>Kontakt</h2>
@@ -52,8 +53,8 @@ export default function ImpressumPage() {
               <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
               <p>
                 Roberto Dreger<br />
-                Hans Bunte Straße 26<br />
-                90431 Nürnberg
+                Wilderstraße 19<br />
+                90408 Nürnberg
               </p>
 
               <h2>EU-Streitschlichtung</h2>

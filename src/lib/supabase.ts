@@ -6,22 +6,30 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 // Check if environment variables are properly set (not undefined, null, or empty string)
 const isSupabaseConfigured = Boolean(supabaseUrl && supabaseUrl.length > 0 && supabaseAnonKey && supabaseAnonKey.length > 0);
 
-// Only create client if environment variables are properly set
-export const supabase: SupabaseClient | null = isSupabaseConfigured
-  ? createClient(supabaseUrl!, supabaseAnonKey!)
-  : null;
+// Upload configuration must never crash rendering or depend on browser storage.
+let client: SupabaseClient | null = null;
+function getSupabase(): SupabaseClient | null {
+  if (!isSupabaseConfigured) return null;
+  if (!client) {
+    try {
+      client = createClient(supabaseUrl!.trim(), supabaseAnonKey!.trim(), {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      });
+    } catch { return null; }
+  }
+  return client;
+}
 
 // Check if supabase is available
 export function isSupabaseAvailable(): boolean {
-  return supabase !== null;
+  return getSupabase() !== null;
 }
 
 // Upload contact form files to contact-uploads bucket
 export async function uploadContactFile(file: File): Promise<string> {
+  const supabase = getSupabase();
   if (!supabase) {
-    // Return empty string instead of throwing error - graceful degradation
-    console.warn('Supabase is not configured. File upload skipped.');
-    return '';
+    throw new Error('Datei-Upload ist derzeit nicht verfügbar. Ihre Anfrage bleibt gespeichert.');
   }
 
   const fileExt = file.name.split('.').pop();
@@ -49,6 +57,7 @@ export async function uploadProjectPhoto(
   projectId: number,
   photoName: string
 ): Promise<string> {
+  const supabase = getSupabase();
   if (!supabase) {
     console.warn('Supabase is not configured. Project photo upload skipped.');
     return '';
@@ -78,6 +87,7 @@ export async function uploadProjectPhoto(
 
 // Get public URL for a project photo
 export function getProjectPhotoUrl(projectId: number, photoName: string): string {
+  const supabase = getSupabase();
   if (!supabase) {
     // Fall back to local path
     return `/photos/p${projectId}/${photoName}`;
@@ -94,6 +104,7 @@ export function getProjectPhotoUrl(projectId: number, photoName: string): string
 export async function migrateLocalPhotosToSupabase(
   localPhotos: { projectId: number; photoName: string; file: File | Blob }[]
 ): Promise<{ success: string[]; failed: string[] }> {
+  const supabase = getSupabase();
   const results = { success: [] as string[], failed: [] as string[] };
 
   if (!supabase) {

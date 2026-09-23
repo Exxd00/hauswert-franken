@@ -7,6 +7,7 @@ import { getAllProjects } from '@/lib/data/projects';
 import { ProjectsContent } from './projects-content';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://rd-frankenbau.de/projekte' },
   title: 'Projekte & Referenzen',
   description: 'Entdecken Sie unsere abgeschlossenen Sanierungsprojekte in Franken. Kernsanierung, Badsanierung und Modernisierung in Nürnberg, Fürth, Erlangen und Umgebung.',
 };

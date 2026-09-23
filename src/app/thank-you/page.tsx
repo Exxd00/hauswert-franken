@@ -1,24 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { trackEvent, trackPhoneClick } from '@/lib/utils/analytics';
+import { trackPhoneClick } from '@/lib/utils/analytics';
 
 export default function ThankYouPage() {
-  useEffect(() => {
-    // Track thank you page view for conversion tracking
-    trackEvent('thank_you_page');
-  }, []);
-
   return (
     <>
-      {/* No-index meta tag */}
-      <head>
-        <meta name="robots" content="noindex, nofollow" />
-      </head>
       <Header />
       <main className="min-h-screen flex items-center justify-center pt-24 pb-16">
         <div className="container-custom">
