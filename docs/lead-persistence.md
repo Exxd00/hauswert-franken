@@ -16,9 +16,11 @@ An internet outage or browser storage removal can prevent delivery; the site doe
 
 ## Measurement
 
-Optional statistics require consent. GA4 receives event names, service and entry point, not contact fields, message text or files. Form and delivery state are stored on the accepted request's row. Clicks and browsing events stay in GA4 and do not create spreadsheet rows. Phone and email events represent clicks, not completed calls or delivered emails.
+Optional statistics require consent. GA4 receives event names, service and entry point, not contact fields, message text or files. Form and delivery state are stored on the accepted request's row. Phone and email clicks also append distinct, pale-blue `Kontaktklick` rows in `Sheet1`. The original lead columns remain unchanged; Y:AD adds record type, contact action, page, entry point, public company contact target and event UUID. Column A contains the click time in Europe/Berlin, Q the receipt time. Other browsing/form events remain in GA4. Phone and email events represent clicks, not completed calls or delivered emails.
 
-The website removes its retired local event queue. `/api/events` and the receiver acknowledge old queued events with `ignored: true` and `storage: analytics_only`; they do not access or recreate an events worksheet. This compatibility response is an explicit retirement, not a claim that the event was durably stored.
+The website removes its retired generic local event queue. New phone/email clicks are persisted before transmission, one local-storage key per UUID, for up to seven days; reconnect, page load and a 30-second interval retry them. `keepalive` allows delivery while a contact link opens another app. A confirmed `stored: true` receipt removes the pending click. Sheet locks and the event UUID in AD deduplicate retries, including concurrent tabs. Storage denial falls back to memory for the current page; cleared/expired storage or a prolonged outage can prevent delivery. Withdrawing consent clears pending clicks.
+
+`/api/events` requires the new click timestamp and an explicit `main_sheet` receipt. Legacy events lacking the new timestamp and all other event types return `ignored: true` and `storage: analytics_only` without spreadsheet access. They never recreate the retired worksheet. Deploying against an older receiver returns 503 for new clicks so they remain queued.
 
 GA4 key events: `rd_form_submit_success` (once per event), `rd_phone_click` and `rd_email_click` (once per session), with no invented monetary value. Reloading `/thank-you` does not count another successful submission.
 
@@ -36,7 +38,8 @@ A spreadsheet copy was created before the change on 2026-09-23. Apps Script vers
 - `node scripts/test-receiver.cjs` checks preservation, duplicate retries, header mismatch, formula escaping and delivery status.
 - `node scripts/test-contact-api.cjs` checks save-before-email, persistence errors, email failure and duplicate delivery.
 - Browser failure test: submit with the sheet service unavailable, reload and confirm the draft returns.
-- Retired event test: valid old queued events receive an explicit ignored receipt without writing to Sheets.
+- `node scripts/test-measurement.cjs` checks consent, persistence before transport, failed transmission, reload/retry deduplication and queue cleanup.
+- Phone/email tests check separate click rows, stable UUIDs, preserved click time, no contact-field leakage and explicit storage acknowledgements. Retired events do not write to Sheets. Live test rows must be removed after verification.
 
 Google Search Console contained an indexed client-error page. Metadata, address, error handling and crawler files were updated. Request a fresh crawl after publishing; Google controls the timing and exact search snippet.
 

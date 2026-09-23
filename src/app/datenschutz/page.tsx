@@ -146,7 +146,10 @@ export default function DatenschutzPage() {
               </p>
               <p>
                 Nach Ihrer Zustimmung messen wir Kontaktaktionen und Formularereignisse in Google
-                Analytics. Bearbeitungs- und Versandstatus stehen direkt bei Ihrer Anfrage. Namen, Telefonnummern,
+                Analytics. Telefon- und E-Mail-Klicks speichern wir außerdem mit Zeitpunkt, Seite und
+                Kontaktkanal in unserer Google-Tabelle. Ausstehende Klicks werden bei Verbindungsproblemen
+                für höchstens sieben Tage auf Ihrem Gerät zur erneuten Übermittlung gespeichert.
+                Bearbeitungs- und Versandstatus stehen direkt bei Ihrer Anfrage. Namen, Telefonnummern,
                 E-Mail-Adressen, Nachrichtentexte und Dateiinhalte werden nicht an Google Analytics
                 übermittelt. Ihre Auswahl können Sie über „Datenschutzeinstellungen“ jederzeit ändern.
               </p>

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import Link from 'next/link';
-import { attribution, clearLegacyEventQueue, consentValue, recordEvent, setConsent } from '@/lib/measurement';
+import { attribution, clearLegacyEventQueue, consentValue, flushContactClicks, recordEvent, setConsent } from '@/lib/measurement';
 
 export function Measurement() {
   const [consent, setChoice] = useState<string | null>('loading');
@@ -17,12 +17,17 @@ export function Measurement() {
   useEffect(()=>{
     (window as unknown as Record<string, unknown>)['ga-disable-G-SX3GXK901G'] = consent !== 'yes';
     if(consent!=='yes') return;
+    void flushContactClicks();
+    const retry=()=>{ void flushContactClicks(); };
+    const timer=window.setInterval(retry,30000);
+    window.addEventListener('online',retry);
+    window.addEventListener('pageshow',retry);
     attribution();
     window.gtag?.('event','page_view',{page_location:window.location.origin+pathname,page_title:document.title});
     if(pathname.startsWith('/leistung/')) recordEvent('service_view',{service:pathname.split('/').pop()});
     if(pathname.startsWith('/projekt/')) recordEvent('project_view');
     const click=(event: MouseEvent)=>{
-      const link=(event.target as Element)?.closest('a'); if(!link) return;
+      const link=event.target instanceof Element ? event.target.closest('a') : null; if(!link) return;
       const href=link.getAttribute('href') || '';
       const entryPoint=link.closest('footer') ? 'footer' : link.closest('nav') ? 'header' : 'page';
       if(href.startsWith('tel:')) recordEvent('phone_click',{entryPoint});
@@ -30,7 +35,7 @@ export function Measurement() {
       else if(href==='/kontakt' || href==='#kontakt') recordEvent('cta_click',{entryPoint});
     };
     document.addEventListener('click',click);
-    return ()=>document.removeEventListener('click',click);
+    return ()=>{ document.removeEventListener('click',click); window.clearInterval(timer); window.removeEventListener('online',retry); window.removeEventListener('pageshow',retry); };
   },[consent,pathname]);
   if(pathname.startsWith('/admin')) return null;
   return <>

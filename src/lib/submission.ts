@@ -22,6 +22,7 @@ export const contactSchema = z.object({
 export type ContactPayload = z.infer<typeof contactSchema>;
 export const eventSchema = z.object({
   eventId: z.string().uuid(), eventName: z.enum(eventNames), submissionId: z.string().uuid().optional(),
+  occurredAt: z.string().datetime().optional(),
   path: z.string().startsWith('/').max(300), entryPoint: text(80), service: text(100), attribution: attributionSchema,
 });
 
