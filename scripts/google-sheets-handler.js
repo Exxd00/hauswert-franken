@@ -9,6 +9,10 @@ function rdCell_(value) { var s = String(value == null ? '' : value).slice(0,100
 function rdDate_() { return Utilities.formatDate(new Date(), 'Europe/Berlin', 'dd.MM.yyyy HH:mm:ss'); }
 function rdId_(id) { return typeof id === 'string' && /^[a-zA-Z0-9:_-]{16,100}$/.test(id); }
 function rdAck_(id, duplicate, status) { return rdJson_({ok:true, success:true, schemaVersion:2, id:id, duplicate:duplicate, emailStatus:status || ''}); }
+function rdEnsureRow_(sheet, row) {
+  var capacity = sheet.getMaxRows();
+  if (row > capacity) sheet.insertRowsAfter(capacity, Math.max(100, row-capacity));
+}
 function rdFind_(sheet, column, id) {
   if (sheet.getLastRow() < 2) return 0;
   var found = sheet.getRange(2,column,sheet.getLastRow()-1,1).createTextFinder(id).matchEntireCell(true).findNext();
@@ -42,7 +46,9 @@ function rdEvent_(sheet, data) {
   if (rdFind_(sheet,12,data.eventId)) return true;
   var a=data.attribution || {};
   var row=[rdDate_(),'rd_'+data.eventName,data.entryPoint || '',data.path || '',data.service || '',data.submissionId || '',a.utmSource || '',a.utmMedium || '',a.utmCampaign || '',a.landingPath || '',a.referrerHost || '',data.eventId].map(rdCell_);
-  sheet.getRange(sheet.getLastRow()+1,1,1,row.length).setValues([row]);
+  var rowNumber=sheet.getLastRow()+1;
+  rdEnsureRow_(sheet,rowNumber);
+  sheet.getRange(rowNumber,1,1,row.length).setValues([row]).setWrap(true).setVerticalAlignment('top');
   return false;
 }
 function rdLifecycle_(sheets,data,name) {
@@ -90,6 +96,7 @@ function doPost(e) {
     var files=Array.isArray(data.fileUrls) ? data.fileUrls.slice(0,5).join('\n') : '';
     var row=[previous[0] || rdDate_(),previous[1] || '🆕 Neu',data.projektArt,data.immobilienTyp,data.ort,data.objektgroesse,data.budgetrahmen,data.zeitrahmen,data.vorname,data.nachname,data.email,data.telefon,data.nachricht,files || previous[13] || 'Keine',id,previous[15] || 'pending',rdDate_(),a.utmSource,a.utmMedium,a.utmCampaign,a.landingPath,data.phase,(data.fileNames || []).join('\n'),(data.failedFiles || []).join('\n')].map(rdCell_);
     rowNumber=rowNumber || sheet.getLastRow()+1;
+    rdEnsureRow_(sheet,rowNumber);
     sheet.getRange(rowNumber,12).setNumberFormat('@');
     sheet.getRange(rowNumber,1,1,row.length).setValues([row]).setVerticalAlignment('top').setWrap(true);
     if (!existed) {

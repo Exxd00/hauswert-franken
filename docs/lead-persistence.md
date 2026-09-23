@@ -12,7 +12,7 @@ The production repository is `Exxd00/hauswert-franken`, linked to the Vercel pro
 
 An internet outage or browser storage removal can prevent delivery; the site does not claim successful submission without a storage acknowledgement. Email failure is visible in the sheet and does not automatically resend mail in the background.
 
-`Sheet1` retains its original A:N columns and data. O:X adds the submission UUID, delivery status, update timestamp, attribution, form state, and attachment names. `Ereignisse` holds events separately. The receiver uses a script lock, stable IDs and exact header checks; it never clears, deletes or sorts existing rows. Formula-like input is stored as text.
+`Sheet1` retains its original A:N columns and data. O:X adds the submission UUID, delivery status, update timestamp, attribution, form state, and attachment names. `Ereignisse` holds events separately. The receiver uses a script lock, stable IDs and exact header checks; it never clears, deletes or sorts existing rows. It expands sheet capacity before a write reaches the current row limit. Formula-like input is stored as text.
 
 ## Measurement
 
@@ -37,3 +37,11 @@ A spreadsheet copy was created before the change on 2026-09-23. Apps Script vers
 - Live event test: resend the same UUID and confirm one row with a duplicate acknowledgement on retry.
 
 Google Search Console contained an indexed client-error page. Metadata, address, error handling and crawler files were updated. Request a fresh crawl after publishing; Google controls the timing and exact search snippet.
+
+### Production evidence, 2026-09-23
+
+- Website release `f13c5d6` reached Ready on Vercel, with the new title and address rendered on the production domain and no browser console errors in the checked flow.
+- Browser contact CTA and service selection appeared in `Ereignisse` through the deployed `/api/events` route.
+- A clearly labelled technical request was saved through production `/api/contact`, moved to `upload_failed`, and retried with the same ID. One row retained the contact details and failed filename. No notification email was requested by this test. The test row was marked `❌ Abgesagt` and annotated as not a customer request.
+- The original customer row, including validation and formatting, matched the pre-change snapshot exactly.
+- Google live test reported that the homepage can be indexed. Indexing was requested, and the sitemap was accepted with Success and 5,282 discovered URLs. This is not a guarantee that all URLs will be indexed or that the snippet changes immediately.
