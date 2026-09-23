@@ -13,6 +13,8 @@ alreadySent=true;const before=emails;r=await call({...payload,phase:'complete'})
 unavailable=true;r=await call({...payload,phase:'complete'});assert.equal(r.status,503);assert.equal((await r.json()).saved,false);assert.equal(emails,before);
 r=await call({...payload,consent:false});assert.equal(r.status,400);
 r=await api.POST(new Request('https://rd-frankenbau.de/api/contact',{method:'POST',headers:{Origin:'https://bad.invalid'},body:JSON.stringify(payload)}));assert.equal(r.status,403);
-console.log('PASS: persistence precedes notification; failed email retains accepted lead; retries skip confirmed delivery; missing receipt is 503; consent and cross-origin checks reject invalid requests.');
+const eventApi=load('src/app/api/events/route.ts');const beforeEvents=writes.length;
+const eventId=crypto.randomUUID();r=await eventApi.POST(new Request('https://rd-frankenbau.de/api/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({eventId,eventName:'phone_click',path:'/kontakt'})}));
+result=await r.json();assert.equal(r.status,200);assert.equal(result.eventId,eventId);assert.equal(result.ignored,true);assert.equal(result.storage,'analytics_only');assert.equal(writes.length,beforeEvents,'Retired event queues must not write to Sheets, even when it is unavailable');
+console.log('PASS: persistence precedes notification; failed email retains accepted lead; retries skip confirmed delivery; missing receipt is 503; consent and cross-origin checks reject invalid requests; analytics retirement never writes to Sheets.');
 })().catch(e=>{console.error(e);process.exitCode=1});
-

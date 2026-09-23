@@ -145,8 +145,8 @@ export default function DatenschutzPage() {
                 zu analysieren. Die Nutzung erfolgt erst nach Ihrer Einwilligung.
               </p>
               <p>
-                Nach Ihrer Zustimmung speichern wir auch Kontaktaktionen und Formularereignisse mit
-                Seite, Leistung und Kampagnenquelle in einem Ereignisprotokoll. Namen, Telefonnummern,
+                Nach Ihrer Zustimmung messen wir Kontaktaktionen und Formularereignisse in Google
+                Analytics. Bearbeitungs- und Versandstatus stehen direkt bei Ihrer Anfrage. Namen, Telefonnummern,
                 E-Mail-Adressen, Nachrichtentexte und Dateiinhalte werden nicht an Google Analytics
                 übermittelt. Ihre Auswahl können Sie über „Datenschutzeinstellungen“ jederzeit ändern.
               </p>

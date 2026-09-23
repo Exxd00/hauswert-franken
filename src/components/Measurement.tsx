@@ -3,22 +3,21 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import Link from 'next/link';
-import { attribution, consentValue, flushEvents, recordEvent, setConsent } from '@/lib/measurement';
+import { attribution, clearLegacyEventQueue, consentValue, recordEvent, setConsent } from '@/lib/measurement';
 
 export function Measurement() {
   const [consent, setChoice] = useState<string | null>('loading');
   const pathname=usePathname();
   useEffect(() => {
     const update=()=>setChoice(consentValue()); update();
+    clearLegacyEventQueue();
     window.addEventListener('rd-consent',update);
-    window.addEventListener('online',flushEvents);
-    const timer=setInterval(flushEvents,30000);
-    return ()=>{ window.removeEventListener('rd-consent',update); window.removeEventListener('online',flushEvents); clearInterval(timer); };
+    return ()=>{ window.removeEventListener('rd-consent',update); };
   },[]);
   useEffect(()=>{
     (window as unknown as Record<string, unknown>)['ga-disable-G-SX3GXK901G'] = consent !== 'yes';
     if(consent!=='yes') return;
-    attribution(); void flushEvents();
+    attribution();
     window.gtag?.('event','page_view',{page_location:window.location.origin+pathname,page_title:document.title});
     if(pathname.startsWith('/leistung/')) recordEvent('service_view',{service:pathname.split('/').pop()});
     if(pathname.startsWith('/projekt/')) recordEvent('project_view');

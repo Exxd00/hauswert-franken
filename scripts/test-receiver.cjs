@@ -9,9 +9,10 @@ class Sheet {
 const oldHeaders=['Datum','Status','Projekt','Immobilientyp','Ort','Größe (m²)','Budget','Zeitrahmen','Vorname','Nachname','E-Mail','Telefon','Nachricht','Dateien'];
 const original=['old date','📞 Kontaktiert','Existing project','','','','','','Existing','','existing@example.invalid','','Do not overwrite','Keine'];
 const leads=new Sheet('Sheet1',[oldHeaders.slice(),original.slice()],0);
-const sheets={Sheet1:leads};const book={getId:()=> '13C_KLXECH2R-N1mSf5WT5eWdzPS1Q_WnD1UZrEWJHiU',getSheetById:id=>id===0?leads:null,getSheetByName:name=>sheets[name],insertSheet:name=>sheets[name]=new Sheet(name)};
+let spreadsheetReads=0;
+const sheets={Sheet1:leads};const book={getId:()=> '13C_KLXECH2R-N1mSf5WT5eWdzPS1Q_WnD1UZrEWJHiU',getSheetById:id=>id===0?leads:null,getSheetByName:name=>sheets[name],insertSheet:()=>{throw Error('A second tab must never be created')}};
 const chain={requireValueInList:()=>chain,setAllowInvalid:()=>chain,build:()=>({})};
-const ctx={console,SpreadsheetApp:{openById:id=>{assert.equal(id,book.getId());return book},getActiveSpreadsheet:()=>null,newDataValidation:()=>chain,flush:()=>{}},ContentService:{MimeType:{JSON:'json'},createTextOutput:t=>({text:t,setMimeType(){return this}})},Utilities:{formatDate:()=>new Date().toISOString(),getUuid:()=>crypto.randomUUID()},LockService:{getScriptLock:()=>({tryLock:()=>true,hasLock:()=>true,releaseLock:()=>{},waitLock:()=>{}})}};
+const ctx={console,SpreadsheetApp:{openById:id=>{spreadsheetReads++;assert.equal(id,book.getId());return book},getActiveSpreadsheet:()=>null,newDataValidation:()=>chain,flush:()=>{}},ContentService:{MimeType:{JSON:'json'},createTextOutput:t=>({text:t,setMimeType(){return this}})},Utilities:{formatDate:()=>new Date().toISOString(),getUuid:()=>crypto.randomUUID()},LockService:{getScriptLock:()=>({tryLock:()=>true,hasLock:()=>true,releaseLock:()=>{},waitLock:()=>{}})}};
 vm.createContext(ctx);vm.runInContext(fs.readFileSync('scripts/google-sheets-handler.js','utf8'),ctx);
 const post=data=>JSON.parse(ctx.doPost({postData:{contents:JSON.stringify({schemaVersion:2,source:'rd-frankenbau.de',...data})}}).text);
 const id=crypto.randomUUID();const lead={recordType:'lead',submissionId:id,consent:true,phase:'capture',vorname:'TEST',nachname:'QA',email:'qa@example.invalid',telefon:'+49000000000',ort:'Nürnberg',projektArt:'Badsanierung',immobilienTyp:'Haus',nachricht:'=unsafe formula',fileNames:['document.pdf']};
@@ -24,8 +25,12 @@ assert.equal(post({...lead,phase:'complete',fileUrls:['https://example.invalid/d
 post(lead);assert.equal(leads.rows[2][21],'complete');assert.equal(leads.rows[2][13],'https://example.invalid/document.pdf');
 assert.equal(post({recordType:'delivery',submissionId:id,emailStatus:'failed'}).ok,true);assert.equal(leads.rows[2][15],'failed');assert.equal(leads.rows.length,3);
 post({recordType:'delivery',submissionId:id,emailStatus:'sent'});post({recordType:'delivery',submissionId:id,emailStatus:'failed'});assert.equal(leads.rows[2][15],'sent');
-const event={recordType:'event',eventId:crypto.randomUUID(),eventName:'phone_click',path:'/kontakt'};post(event);const count=sheets.Ereignisse.rows.length;assert.equal(post(event).duplicate,true);assert.equal(sheets.Ereignisse.rows.length,count);
-assert.ok(sheets.Ereignisse.capacity>=count,'Event sheet capacity expands before writing');
+const event={recordType:'event',eventId:crypto.randomUUID(),eventName:'phone_click',path:'/kontakt'};
+const beforeEvents=spreadsheetReads;
+assert.equal(post(event).ignored,true);assert.equal(post(event).storage,'analytics_only');
+assert.equal(post({...event,eventName:'invalid'}).ok,false);
+assert.equal(spreadsheetReads,beforeEvents,'Retired event queues never access the spreadsheet');
+ctx.setupSheet();assert.deepEqual(Object.keys(sheets),['Sheet1']);assert.equal(leads.rows.length,3);
 leads.rows[0][0]='Custom header';assert.equal(post({...lead,submissionId:crypto.randomUUID()}).ok,false);assert.equal(leads.rows.length,3);assert.deepEqual(leads.rows[1],original);
 assert.equal(post({...lead,submissionId:crypto.randomUUID(),consent:false}).ok,false);
-console.log('PASS: existing data preserved, header mismatch safe, retries deduplicated, files retained, failed email retained, confirmed delivery monotonic, formula injection escaped.');
+console.log('PASS: single sheet retained, retired event queues do not write, existing data preserved, header mismatch safe, retries deduplicated, files retained, failed email retained, confirmed delivery monotonic, formula injection escaped.');
