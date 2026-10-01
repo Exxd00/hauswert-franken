@@ -71,6 +71,7 @@ function doPost(e) {
     var legacy = !data.schemaVersion && !data.recordType && typeof data.email === 'string' && data.projektArt;
     if (legacy) { data.submissionId=Utilities.getUuid(); data.phase='complete'; data.recordType='lead'; data.consent=true; }
     else if (data.schemaVersion !== 2 || data.source !== 'rd-frankenbau.de') return rdJson_({ok:false,error:'invalid_source'});
+    if (data.recordType === 'quote') return rdQuote_(data);
     var id=data.recordType === 'event' ? data.eventId : data.submissionId;
     if (!rdId_(id)) return rdJson_({ok:false,error:'invalid_id'});
     if (['lead','event','delivery'].indexOf(data.recordType) < 0) return rdJson_({ok:false,error:'invalid_type'});
@@ -134,4 +135,58 @@ function onEdit(e) {
   if (!e || e.range.getSheet().getSheetId() !== 0 || e.range.getColumn() !== 2 || e.range.getRow() < 2) return;
   var colors={'🆕 Neu':'#FFFBEB','📞 Kontaktiert':'#E0F2FE','📅 Termin vereinbart':'#DCFCE7','🔍 Besichtigung':'#F3E8FF','💰 Angebot erstellt':'#FEF3C7','✅ Auftrag erhalten':'#D1FAE5','🚧 In Arbeit':'#FFEDD5','✔️ Abgeschlossen':'#BBF7D0','❌ Abgesagt':'#FECACA'};
   e.range.getSheet().getRange(e.range.getRow(),1,1,RD_HEADERS.length).setBackground(colors[e.range.getValue()] || '#FFFFFF');
+}
+
+// Offers use a separate tab; the existing lead/event sheet remains unchanged.
+// Only the PUBLIC verification key is stored in this script. The signing key stays on Vercel.
+var RD_QUOTE_PUBLIC_N = 'ooqkif1oLSoXvC6jpR643inlCdwQydTg6DsBbKlnVKLGEK3MQl52j9g6BS55mK_nB01IV2LOXqCNJhUfFPBaQ8Y2V67cXz0bm6BBDbx2BFsFNFa08dMVLYdfSbtODgeph5skRf2Odk4fW00bKjKbz9xXnBInsNEEGah8aasKTSyrPbU9mmZnsnzVUnAzEltiGn3_4kB6-Bi-mltEtS9PQGAZ6DKfiQvCZtN-WYsikqMwHUFcqTrnQyZUlRDEWvgBKQmGHkVrwC1tpxxUi79l3gBboQU7h6_LdmNPr1CNBSCPEWYY4E6seH6BlLTcI-QrgPkB2Qt1yldtjletryVGoQ';
+var RD_QUOTE_HEADERS = ['Angebot-Nr.','Kunde','Projekt','Status','Erstellt','Aktualisiert','Netto (€)','Rabatt (€)','MwSt. (%)','MwSt. (€)','Gesamt (€)','PDF-Abrufe','Letzter PDF-Abruf','Objektadresse','E-Mail','Telefon','Leistungen','Angebots-ID','Version','Kundenanschrift'];
+function rdHex_(bytes) { return bytes.map(function(b) { return ((b+256)%256).toString(16).padStart(2,'0'); }).join(''); }
+function rdQuoteSignature_(raw, signature) {
+  try {
+    if (typeof raw !== 'string' || raw.length > 30000 || typeof signature !== 'string' || !/^[A-Za-z0-9+/]{342}==$/.test(signature)) return false;
+    var bytes = Utilities.base64Decode(signature);
+    if (bytes.length !== 256) return false;
+    var n = BigInt('0x'+rdHex_(Utilities.base64DecodeWebSafe(RD_QUOTE_PUBLIC_N+'==')));
+    var base = BigInt('0x'+rdHex_(bytes));
+    if (base >= n) return false;
+    var power = BigInt(65537), value = BigInt(1);
+    while (power > BigInt(0)) { if (power % BigInt(2)) value = value * base % n; base = base * base % n; power /= BigInt(2); }
+    var digest = rdHex_(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, raw, Utilities.Charset.UTF_8));
+    var tail = '3031300d060960864801650304020105000420'+digest;
+    var expected = '0001'+'ff'.repeat(256-3-tail.length/2)+'00'+tail;
+    return value.toString(16).padStart(512,'0') === expected;
+  } catch (_) { return false; }
+}
+function rdQuoteSheet_() {
+  var book = SpreadsheetApp.openById(RD_SHEET_ID);
+  var sheet = book.getSheetByName('Angebote') || book.insertSheet('Angebote');
+  rdHeaders_(sheet, RD_QUOTE_HEADERS);
+  sheet.getRange(1,1,1,RD_QUOTE_HEADERS.length).setBackground('#1e293b');
+  return sheet;
+}
+function rdQuote_(data) {
+  if (!rdQuoteSignature_(data.quoteJson, data.signature)) return rdJson_({ok:false,error:'invalid_signature'});
+  var q = JSON.parse(data.quoteJson), s = q.snapshot;
+  if (!rdId_(q.id) || q.id !== data.submissionId || !Number.isSafeInteger(q.version) || q.version < 1 || !s || !s.customer || !Array.isArray(s.lines) || s.lines.length > 60) return rdJson_({ok:false,error:'invalid_quote'});
+  if (['offen','angenommen','abgelehnt','archiviert'].indexOf(q.status)<0 || !Number.isSafeInteger(s.totalCents) || s.totalCents < 0) return rdJson_({ok:false,error:'invalid_quote'});
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(10000)) return rdJson_({ok:false,error:'busy'});
+  try {
+    var sheet = rdQuoteSheet_(), existing = rdFind_(sheet,18,q.id);
+    var previousVersion = existing ? Number(sheet.getRange(existing,19).getValue()) : 0;
+    if (previousVersion >= q.version) return rdJson_({ok:true,schemaVersion:2,id:q.id,quoteVersion:previousVersion,duplicate:true});
+    var row = existing || sheet.getLastRow()+1;
+    rdEnsureRow_(sheet,row);
+    var lines = s.lines.map(function(l){return l.name+': '+l.quantity+' '+l.unit+' × '+(l.priceCents/100).toFixed(2)+' €';}).join('\n');
+    var values = [q.offerNumber,s.customer.name,s.project,q.status,rdDate_(q.created_at),rdDate_(q.updated_at),s.netCents/100,s.discountCents/100,s.taxPercent,s.taxCents/100,s.totalCents/100,q.pdf_count,q.last_pdf_at ? rdDate_(q.last_pdf_at) : '',s.location,s.customer.email,s.customer.phone,lines,q.id,q.version,s.customer.address];
+    values = values.map(function(v){return typeof v === 'number' ? v : rdCell_(v);});
+    sheet.getRange(row,16).setNumberFormat('@');
+    sheet.getRange(row,18).setNumberFormat('@');
+    sheet.getRange(row,1,1,values.length).setValues([values]).setVerticalAlignment('top').setWrap(true);
+    sheet.getRange(row,7,1,2).setNumberFormat('#,##0.00 "€"');
+    sheet.getRange(row,10,1,2).setNumberFormat('#,##0.00 "€"');
+    SpreadsheetApp.flush();
+    return rdJson_({ok:true,schemaVersion:2,id:q.id,quoteVersion:q.version,duplicate:Boolean(existing)});
+  } finally { lock.releaseLock(); }
 }

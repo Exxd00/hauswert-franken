@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export function FloatingButtons() {
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const pathname = usePathname();
 
   const phoneNumberTel = '+491742629258';
 
@@ -20,6 +22,7 @@ export function FloatingButtons() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  if (pathname.startsWith('/admin')) return null;
   return (
     <>
       {/* Left side - Scroll to top button */}
