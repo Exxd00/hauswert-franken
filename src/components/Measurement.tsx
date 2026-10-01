@@ -16,7 +16,7 @@ export function Measurement() {
   },[]);
   useEffect(()=>{
     (window as unknown as Record<string, unknown>)['ga-disable-G-SX3GXK901G'] = consent !== 'yes';
-    if(consent!=='yes') return;
+    if(consent!=='yes' || pathname.startsWith('/admin')) return;
     void flushContactClicks();
     const retry=()=>{ void flushContactClicks(); };
     const timer=window.setInterval(retry,30000);
