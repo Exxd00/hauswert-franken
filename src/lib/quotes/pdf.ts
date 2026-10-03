@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { PDFDocument, rgb } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { dateDE, money, Quote, quoteNumber } from './model';
+import { dateDE, money, Quote, quoteNumber, validUntilDate } from './model';
 
 let fontBytes: Promise<Buffer> | undefined;
 export async function quotePdf(quote: Quote) {
@@ -56,9 +56,9 @@ export async function quotePdf(quote: Quote) {
   if (q.customer.email) paragraph(q.customer.email, 300, 9, muted);
   y -= 25; ensure(95);
   draw('Angebot', 42, y, 25); right(quoteNumber(quote), 553, y, 13); y -= 27;
-  const validUntil = new Date(quote.created_at); validUntil.setUTCDate(validUntil.getUTCDate() + q.validityDays);
+  const validUntil = validUntilDate(quote.created_at, q.validityDays);
   draw(`Datum: ${dateDE(quote.created_at)}`, 42, y, 9, muted);
-  right(`Gültig bis: ${dateDE(validUntil.toISOString())}`, 553, y, 9); y -= 28;
+  right(`Gültig bis: ${dateDE(validUntil)}`, 553, y, 9); y -= 28;
   paragraph(q.project, 511, 13); if (q.location) paragraph(`Objekt: ${q.location}`, 511, 10, muted);
   paragraph(`Immobilie: ${q.propertyType}`, 511, 9, muted); y -= 18;
   function tableHead() {
@@ -73,7 +73,7 @@ export async function quotePdf(quote: Quote) {
     while (offset < names.length) {
       const remainingHeight = (names.length - offset) * 15 + 16;
       // Keep normal positions together; long scopes continue safely on a new page.
-      if ((offset === 0 && y - Math.min(remainingHeight, 600) < 72) || y < 125) { newPage(); tableHead(); }
+      if ((offset === 0 && remainingHeight <= 650 && y - remainingHeight < 72) || y < 125) { newPage(); tableHead(); }
       if (offset > 0) { draw(`Position ${line.catalogNumber || q.lines.indexOf(line) + 1} (Fortsetzung)`, 50, y, 8, muted); y -= 17; }
       const count = Math.max(1, Math.min(names.length - offset, Math.floor((y - 88) / 15)));
       names.slice(offset, offset + count).forEach((name, i) => draw(name, 50, y - i * 15, 10));

@@ -14,6 +14,9 @@ function load(file) {
   return module.exports;
 }
 const model = load('src/lib/quotes/model.ts');
+assert.equal(model.dateDE(model.validUntilDate('2026-10-03T22:58:00Z',30)),'3.11.2026','Autumn DST must not shorten validity by a calendar day');
+assert.equal(model.dateDE(model.validUntilDate('2026-03-28T23:30:00Z',30)),'28.4.2026');
+assert.equal(model.dateDE(model.validUntilDate('2028-02-28T23:30:00Z',1)),'1.3.2028');
 const services = [{ id: 'painting', name: 'Malerarbeiten', unit: 'm²', priceCents: 1999, active: true }];
 const total = model.calculate([{ serviceId: 'painting', quantity: 2.555 }], services, 10, 19);
 assert.equal(total.subtotalCents, 5107); assert.equal(total.discountCents, 511);

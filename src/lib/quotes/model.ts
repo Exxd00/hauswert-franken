@@ -69,3 +69,9 @@ export type Quote = { id: string; number: number; snapshot: QuoteSnapshot; creat
 export const money = (cents: number) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(cents / 100);
 export const quoteNumber = (quote: Pick<Quote, 'number' | 'created_at'>) => `RD-${new Date(quote.created_at).getUTCFullYear()}-${String(quote.number).padStart(5, '0')}`;
 export const dateDE = (date: string) => new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin' }).format(new Date(date));
+export function validUntilDate(createdAt: string, days: number) {
+  const parts = new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric', month: 'numeric', day: 'numeric' }).formatToParts(new Date(createdAt));
+  const part = (type: string) => Number(parts.find(p => p.type === type)?.value);
+  // Add calendar days in the owner's timezone, including daylight-saving changes.
+  return new Date(Date.UTC(part('year'), part('month') - 1, part('day') + days, 12)).toISOString();
+}
