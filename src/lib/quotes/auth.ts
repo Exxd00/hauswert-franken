@@ -46,9 +46,10 @@ export async function guard(request: Request, mutation = false) {
   if (!(await authenticated())) return json({ error: 'Bitte erneut anmelden.' }, 401);
   return null;
 }
-export async function body(request: Request) {
+export async function body(request: Request, maxBytes = 50_000) {
+  if (Number(request.headers.get('content-length')) > maxBytes) throw new Error('payload');
   const raw = await request.text();
-  if (raw.length > 50_000) throw new Error('payload');
+  if (Buffer.byteLength(raw, 'utf8') > maxBytes) throw new Error('payload');
   return JSON.parse(raw);
 }
 const localAttempts = new Map<string, { count: number; until: number }>();

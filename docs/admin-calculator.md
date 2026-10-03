@@ -1,6 +1,16 @@
 # Owner calculator
 
-The existing `/admin` now has four sections: calculator, saved offers, settings, and website assets. No customer login is required. Pricing starts unset deliberately: the public marketing price ranges are not a verified unit-price catalogue. The owner enters actual net prices once in Settings. Unpriced services cannot be used in a saved offer.
+The existing `/admin` has four sections: calculator, saved offers, settings, and website assets. No customer login is required. New installations start with unset prices; private owner catalogues are imported into authenticated Supabase settings. Public marketing price ranges are not a verified unit-price catalogue. Unpriced services cannot be used in a saved offer.
+
+## Private price catalogues
+
+Settings support up to 600 services with an optional position number, category, full scope, default quantity and internal note. Search matches names, numbers and scopes; category filters and batches of 12 keep the calculator and settings usable on phones. Internal notes are shown only to the owner and never copied to quote snapshots or PDFs. The quote limit remains 60 positions. Settings accept at most 1.5 MB of UTF-8 JSON; other endpoints retain their smaller limits.
+
+Import printed **net unit prices**, not extended line totals. Keep non-unit source quantities as optional defaults; the owner can change quantities in each quote. Discounts start at zero and are explicitly selected for each quote. Preserve supplied material/installation scope and source units; do not relabel all positions as labour only. An unclear annotation is recorded as an internal review note rather than replacing a printed rate. Deduplicate repeated pages and omit unnamed, unpriced placeholders. Retain a private source audit and backup outside Git, merge with existing owner edits, and use the settings version check when importing.
+
+Do not place customer price lists, scans, OCR output or settings backups in this public repository or static assets. They belong in ignored local work files and the private database. The PDF uses the full saved scope and position number, with page continuation for long descriptions. Existing snapshots without these optional fields remain compatible.
+
+The signed Sheet payload includes compact position numbers, names, quantities and rates, while the database retains full scopes. This keeps 60-position offers within the existing receiver's 30,000-character limit. Never trim the persisted snapshot or customer PDF to accommodate the Sheet.
 
 ## Deployment
 
