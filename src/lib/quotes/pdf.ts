@@ -67,12 +67,23 @@ export async function quotePdf(quote: Quote) {
   }
   tableHead();
   for (const line of q.lines) {
-    const names = wrap(line.name, 185, 10); const height = Math.max(34, names.length * 15 + 16);
-    if (y - height < 72) { newPage(); tableHead(); }
-    names.forEach((name, i) => draw(name, 50, y - i * 15, 10));
-    right(`${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 3 }).format(line.quantity)} ${line.unit}`, 330, y, 9);
-    right(money(line.priceCents), 438, y, 9); right(money(line.totalCents), 545, y, 9);
-    y -= height;
+    const description = `${line.catalogNumber ? `${line.catalogNumber} · ` : ''}${line.description || line.name}`;
+    const names = wrap(description, 185, 10);
+    let offset = 0;
+    while (offset < names.length) {
+      const remainingHeight = (names.length - offset) * 15 + 16;
+      // Keep normal positions together; long scopes continue safely on a new page.
+      if ((offset === 0 && y - Math.min(remainingHeight, 600) < 72) || y < 125) { newPage(); tableHead(); }
+      if (offset > 0) { draw(`Position ${line.catalogNumber || q.lines.indexOf(line) + 1} (Fortsetzung)`, 50, y, 8, muted); y -= 17; }
+      const count = Math.max(1, Math.min(names.length - offset, Math.floor((y - 88) / 15)));
+      names.slice(offset, offset + count).forEach((name, i) => draw(name, 50, y - i * 15, 10));
+      if (offset === 0) {
+        right(`${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 3 }).format(line.quantity)} ${line.unit}`, 330, y, 9);
+        right(money(line.priceCents), 438, y, 9); right(money(line.totalCents), 545, y, 9);
+      }
+      offset += count; y -= Math.max(34, count * 15 + 16);
+      if (offset < names.length) { newPage(); tableHead(); }
+    }
     page.drawLine({ start: { x: 42, y: y + 10 }, end: { x: 553, y: y + 10 }, thickness: .5, color: rgb(.86, .88, .91) });
   }
   y -= 10; ensure(150);

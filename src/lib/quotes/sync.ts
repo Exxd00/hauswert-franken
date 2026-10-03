@@ -2,14 +2,15 @@ import 'server-only';
 import { sign } from 'node:crypto';
 import { adminDb } from './db';
 import { persistToSheets } from '@/lib/sheets';
-import { Quote, quoteNumber } from './model';
+import { Quote } from './model';
+import { sheetQuote } from './sheet-payload';
 
 export async function syncQuote(quote: Quote): Promise<Quote> {
   if (quote.sheet_synced_version >= quote.version) return quote;
   try {
     const key = process.env.QUOTE_SIGNING_PRIVATE_KEY?.replace(/\\n/g, '\n');
     if (!key) throw new Error('sheet_configuration');
-    const quoteJson = JSON.stringify({ ...quote, offerNumber: quoteNumber(quote) });
+    const quoteJson = JSON.stringify(sheetQuote(quote));
     const receipt = await persistToSheets({ recordType: 'quote', submissionId: quote.id, quoteJson,
       signature: sign('RSA-SHA256', Buffer.from(quoteJson), key).toString('base64'),
     }, quote.id);
