@@ -14,7 +14,9 @@ export async function quotePdf(quote: Quote) {
   fontBytes ??= readFile(path.join(process.cwd(), 'public/fonts/NotoSans.ttf'));
   const font = await doc.embedFont(await fontBytes, { subset: true });
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
-  const logo = await doc.embedJpg(Buffer.from(letterheadLogo, 'base64'));
+  // pdf-lib's JPEG reader ignores byteOffset on pooled Node Buffers. Its base64
+  // decoder creates an owned Uint8Array, so serverless buffer reuse stays safe.
+  const logo = await doc.embedJpg(letterheadLogo);
   const ink = rgb(24 / 255, 26 / 255, 27 / 255);
   const bronze = rgb(185 / 255, 133 / 255, 70 / 255);
   const cream = rgb(243 / 255, 241 / 255, 236 / 255);

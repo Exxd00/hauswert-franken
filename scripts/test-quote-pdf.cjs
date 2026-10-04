@@ -15,6 +15,7 @@ function load(file) {
 }
 const model = load('src/lib/quotes/model.ts');
 const { quotePdf } = load('src/lib/quotes/pdf.ts');
+const { letterheadLogo } = load('src/lib/quotes/letterhead-logo.ts');
 const services = [
   { id: 'walls', catalogNumber: '101', name: 'Wände vorbereiten', description: 'Wände vorbereiten, Unebenheiten ausgleichen und Flächen grundieren.', unit: 'm²', priceCents: 2375, active: true },
   { id: 'paint', catalogNumber: '102', name: 'Malerarbeiten', description: 'Wandflächen zweimal mit hochwertiger weißer Innenfarbe streichen.', unit: 'm²', priceCents: 1540, active: true },
@@ -74,6 +75,20 @@ async function check(name, quote, verify) {
 }
 
 (async () => {
+  // Reproduce the shared-buffer allocation used by Node 24 in serverless
+  // instances: a JPEG can begin after unrelated bytes in the same ArrayBuffer.
+  const originalBufferFrom = Buffer.from;
+  Buffer.from = function (...args) {
+    const value = originalBufferFrom.apply(Buffer, args);
+    if (args[0] === letterheadLogo && args[1] === 'base64') {
+      const allocation = Buffer.alloc(value.length + 16); value.copy(allocation, 16);
+      return allocation.subarray(16);
+    }
+    return value;
+  };
+  try {
+    await check('letterhead-pooled-buffer', fixture(), ({ pages }) => assert.equal(pages.length, 1));
+  } finally { Buffer.from = originalBufferFrom; }
   const sample = fixture();
   assert.equal(sample.snapshot.totalCents, 81484);
   const preview = await check('letterhead-sample', sample, ({ texts, pages }) => {
@@ -108,5 +123,5 @@ async function check(name, quote, verify) {
     assert.ok(texts.some(t => t.text.includes('Виктор')));
     assert.ok(texts.some(t => t.text.includes('Eigentümergemeinschaft')));
   });
-  console.log('PASS: original logo and legal footer on every A4 page; short, long, 60-position, Unicode and maximum-amount offers; no lost scopes, overlapping columns or out-of-page text; saved totals unchanged.');
+  console.log('PASS: pooled serverless JPEG buffers; original logo and legal footer on every A4 page; short, long, 60-position, Unicode and maximum-amount offers; no lost scopes, overlapping columns or out-of-page text; saved totals unchanged.');
 })().catch(error => { console.error(error); process.exitCode = 1; });
